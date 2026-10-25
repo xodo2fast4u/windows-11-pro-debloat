@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://xodo2fast4u.github.io/windows-11-pro-debloat/sitemap.xml
