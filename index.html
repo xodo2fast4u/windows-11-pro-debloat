@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Windows 11 Debloat Guide: Services, Tasks &amp; Setup</title>
+    <meta
+      name="description"
+      content="A personal Windows 11 Pro debloat guide for build 26100.1742, covering offline installation, debloat tools, 268 service decisions, scheduled tasks, firewall rules and security tradeoffs."
+    />
+    <meta property="og:type" content="article" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content="Windows 11 Debloat Guide: Services, Tasks &amp; Setup" />
+    <meta
+      property="og:description"
+      content="A personal Windows 11 Pro setup with an offline install, 268 documented service decisions, scheduled tasks, firewall rules and security tradeoffs."
+    />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Windows 11 Debloat Guide: Services, Tasks &amp; Setup" />
+    <meta
+      name="twitter:description"
+      content="A personal Windows 11 Pro setup with an offline install, 268 documented service decisions, scheduled tasks, firewall rules and security tradeoffs."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Hanken+Grotesk:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
+    <link rel="manifest" href="site.webmanifest" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <header class="topBar">
+      <nav class="topNav" aria-label="Main">
+        <div class="navLinks">
+          <a href="#machine">Machine</a>
+          <a href="#install">Install</a>
+          <a href="#services">Services</a>
+          <a href="#tasks">Tasks</a>
+          <a href="#network">Network</a>
+          <a href="#notes">Notes</a>
+        </div>
+        <div class="themeSwitch" role="group" aria-label="Theme">
+          <button type="button" data-theme="light" aria-label="Light theme" title="Light theme">
+            <svg
+              class="themeIcon"
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="4"></circle>
+              <path d="M12 2v2"></path>
+              <path d="M12 20v2"></path>
+              <path d="m4.93 4.93 1.41 1.41"></path>
+              <path d="m17.66 17.66 1.41 1.41"></path>
+              <path d="M2 12h2"></path>
+              <path d="M20 12h2"></path>
+              <path d="m6.34 17.66-1.41 1.41"></path>
+              <path d="m19.07 4.93-1.41 1.41"></path>
+            </svg>
+          </button>
+          <button type="button" data-theme="dark" aria-label="Dark theme" title="Dark theme">
+            <svg
+              class="themeIcon"
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+            </svg>
+          </button>
+          <button type="button" data-theme="system" aria-label="System theme" title="System theme">
+            <svg
+              class="themeIcon"
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect width="20" height="14" x="2" y="3" rx="2"></rect>
+              <line x1="8" x2="16" y1="21" y2="21"></line>
+              <line x1="12" x2="12" y1="17" y2="21"></line>
+            </svg>
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <p class="heroKicker">Build 10.0.26100.1742</p>
+        <h1 class="heroTitle">My Windows 11 Pro debloat setup, documented.</h1>
+        <p class="heroSub">
+          A written record of one setup, from the first boot to the last blocked address. Built for
+          a PC used for video, anime, code, Discord and a few Pokemon fan games. It is a personal
+          record that I hope helps others.
+        </p>
+        <div class="heroActions">
+          <a class="buttonPrimary" href="#install">Read the steps</a>
+          <a class="buttonGhost" href="#notes">Tradeoffs first</a>
+        </div>
+        <ul class="statRow">
+          <li class="statCard">
+            <span class="statValue">12 min</span><span class="statLabel">Offline install time</span>
+          </li>
+          <li class="statCard">
+            <span class="statValue">2</span><span class="statLabel">Debloat scripts used</span>
+          </li>
+          <li class="statCard">
+            <span class="statValue">268</span
+            ><span class="statLabel">Services listed and explained</span>
+          </li>
+          <li class="statCard">
+            <span class="statValue">12</span><span class="statLabel">Scheduled tasks disabled</span>
+          </li>
+          <li class="statCard">
+            <span class="statValue">3</span><span class="statLabel">Addresses blocked</span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="section" id="machine">
+        <div class="sectionHead">
+          <h2>The machine this was built on</h2>
+          <p>
+            Every choice on this page was applied to this specific machine and conditions. Certain
+            conditions made it possible to make certain choices if your conditions are different
+            apply what applies to you
+          </p>
+        </div>
+        <div class="specGrid">
+          <article class="specCard">
+            <h3>Processor</h3>
+            <p>
+              Intel Core i5 3427U at 1.80 GHz, 2 cores and 4 logical processors. It's a 2012 mobile
+              chip.
+            </p>
+          </article>
+          <article class="specCard">
+            <h3>Graphics</h3>
+            <p>Intel HD Graphics 4000, built into the processor. No dedicated graphics card.</p>
+          </article>
+          <article class="specCard">
+            <h3>Memory</h3>
+            <p>16 GB RAM.</p>
+          </article>
+          <article class="specCard">
+            <h3>Storage</h3>
+            <p>
+              Solid state drive, most likely 256 GB. This has not been confirmed. Check Settings,
+              then System, then Storage.
+            </p>
+          </article>
+          <article class="specCard">
+            <h3>Display</h3>
+            <p>
+              A TV connected over HDMI, not a monitor. The TV is key locked and its remote doesn't
+              work, so nothing on the TV side can be changed.
+            </p>
+          </article>
+          <article class="specCard">
+            <h3>Connectivity</h3>
+            <p>
+              No Wi Fi or Bluetooth hardware. Networking is by Ethernet cable only. The install ran
+              offline.
+            </p>
+          </article>
+          <article class="specCard">
+            <h3>Windows</h3>
+            <p>Windows 11 Pro, build 10.0.26100.1742, installed with a local account.</p>
+          </article>
+          <article class="specCard">
+            <h3>Use</h3>
+            <p>
+              YouTube, anime, coding, Discord and Pokemon fan games. No Xbox, no printer, no camera,
+              no remote desktop.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="install">
+        <div class="sectionHead">
+          <h2>The order of operations</h2>
+          <p>The order matters. Each step below is something I did, in the order I did it.</p>
+        </div>
+        <ol class="timeline">
+          <li class="timelineItem">
+            <h3>Install offline, with a local account</h3>
+            <p>
+              No Ethernet and no Wi-Fi during setup. The whole install took about 12 minutes.
+              Setting up with a local account avoids the Microsoft account prompt.
+            </p>
+          </li>
+          <li class="timelineItem">
+            <h3>Turn off Windows Update immediately</h3>
+            <p>
+              Done before the PC ever touches the internet. Connecting first lets Windows pull down
+              updates. Note: can't stop it from installing pre installed apps.
+            </p>
+          </li>
+          <li class="timelineItem">
+            <h3>Connect Ethernet</h3>
+            <p>
+              Only after the update service was already off. This was the first time the machine
+              went online.
+            </p>
+          </li>
+          <li class="timelineItem">
+            <h3>Run Chris Titus Tech WinUtil, then restart</h3>
+            <p>
+              I used
+              <a href="https://github.com/ChrisTitusTech/winutil">Chris Titus Tech's WinUtil</a>
+              and picked only the tweaks I was comfortable with, then restarted.
+            </p>
+          </li>
+          <li class="timelineItem">
+            <h3>Run Win11Debloat, then restart</h3>
+            <p>
+              I used
+              <a href="https://github.com/Raphire/Win11Debloat">Raphi's Win11Debloat</a>
+              with only the options I was comfortable with, then restarted again.
+            </p>
+          </li>
+          <li class="timelineItem">
+            <h3>Disable the services</h3>
+            <p>
+              Done manually in services.msc. The full list and reasons are in the Services section
+              below.
+            </p>
+          </li>
+          <li class="timelineItem">
+            <h3>Disable the scheduled tasks</h3>
+            <p>
+              Done in Task Scheduler. Disabling a service doesn't stop the scheduled tasks that feed
+              the same data collection, so these are handled separately.
+            </p>
+          </li>
+          <li class="timelineItem">
+            <h3>Block the delivery and telemetry addresses</h3>
+            <p>
+              Windows Defender Firewall with Advanced Security, using outbound rules. Details in the
+              Network section.
+            </p>
+          </li>
+        </ol>
+        <p class="note">
+          Check your version with <code>ver</code> in Command Prompt. Mine reports Microsoft Windows
+          [Version 10.0.26100.1742].
+        </p>
+      </section>
+
+      <section class="section" id="services">
+        <div class="sectionHead">
+          <h2>Every service on this PC</h2>
+          <p>
+            This list comes from my own export of services.msc, 268 entries in total. For each one
+            you can see its current state, its startup type, what it does and why it is in the state
+            it's in on this machine.
+          </p>
+        </div>
+        <div class="regeditCallout">
+          <h3>If a service won't stay disabled</h3>
+          <p>
+            Some services can't be changed from services.msc alone or they switch back after a
+            restart. Open Registry Editor (search for regedit) and go to HKEY_LOCAL_MACHINE, SYSTEM,
+            CurrentControlSet, Services. Every service has its own key there, named after its
+            service name, not its display name. Open the key, find the Start value and set it to 4
+            to disable, 3 for Manual or 2 for Automatic. Export the key first so you can restore it.
+          </p>
+        </div>
+        <div class="filterRow">
+          <label class="searchField">
+            <span class="searchLabel">Search by name or description</span>
+            <input type="search" id="serviceFilter" placeholder="Try bluetooth, xbox or camera" />
+          </label>
+          <label class="searchField">
+            <span class="searchLabel">Show</span>
+            <select id="serviceVerdict">
+              <option value="all">All services</option>
+              <option value="Disabled by me">Disabled by me</option>
+              <option value="Left on">Running and left on</option>
+              <option value="Left alone">Stopped, left alone</option>
+              <option value="Keep on">Kept on by design</option>
+              <option value="Should be disabled">Should be disabled</option>
+            </select>
+          </label>
+        </div>
+        <p class="resultCount" id="serviceCount"></p>
+        <div class="tableWrap">
+          <table class="dataTable" id="serviceTable">
+            <thead>
+              <tr>
+                <th>Service</th>
+                <th>State</th>
+                <th>Startup</th>
+                <th>Decision</th>
+                <th>What it does</th>
+                <th>Why in my case</th>
+              </tr>
+            </thead>
+            <tbody id="serviceBody"></tbody>
+          </table>
+        </div>
+        <p class="emptyState" id="serviceEmpty" hidden>No service matches that filter.</p>
+      </section>
+
+      <section class="section" id="tasks">
+        <div class="sectionHead">
+          <h2>Scheduled tasks I disabled</h2>
+          <p>
+            Set to Disabled in Task Scheduler under Task Scheduler Library, Microsoft, Windows. Most
+            of these feed data collection, maintenance or the Maps app.
+          </p>
+        </div>
+        <div class="taskGrid">
+          <article class="taskCard">
+            <h3>Customer Experience Improvement Program</h3>
+            <p>Consolidator, UsbCeip</p>
+          </article>
+          <article class="taskCard">
+            <h3>Application Experience</h3>
+            <p>Microsoft Compatibility Appraiser, ProgramDataUpdater, StartupAppTask</p>
+          </article>
+          <article class="taskCard">
+            <h3>Feedback and Siuf</h3>
+            <p>DmClient, DmClientOnScenarioDownload</p>
+          </article>
+          <article class="taskCard">
+            <h3>Windows Error Reporting</h3>
+            <p>QueueReporting</p>
+          </article>
+          <article class="taskCard">
+            <h3>Disk diagnostics</h3>
+            <p>DiskDiagnosticDataCollector</p>
+          </article>
+          <article class="taskCard">
+            <h3>Maps</h3>
+            <p>MapsToastTask, MapsUpdateTask</p>
+          </article>
+          <article class="taskCard">
+            <h3>Autochk</h3>
+            <p>Proxy</p>
+          </article>
+          <article class="taskCard">
+            <h3>Update orchestration</h3>
+            <p>The tasks in UpdateOrchestrator, disabled together with Windows Update.</p>
+          </article>
+        </div>
+        <p class="note">
+          Some of these tasks come back after a major Windows update. Recheck this folder after any
+          feature update.
+        </p>
+      </section>
+
+      <section class="section" id="network">
+        <div class="sectionHead">
+          <h2>Network addresses observed</h2>
+          <p>
+            Windows Defender Firewall can't block by name, so these are IP addresses. The Microsoft
+            delivery addresses can change. Three addresses are blocked; two other observations are
+            pending identification or optional. They were found using a custom live network traffic
+            tool I built with Rust.
+          </p>
+        </div>
+        <div class="blockList">
+          <article class="blockCard">
+            <div class="blockHead">
+              <h3>Microsoft delivery, IPv4</h3>
+              <span class="statusText">Blocked</span>
+            </div>
+            <p class="mono">5.188.133.99</p>
+            <p class="blockMeta">
+              Resolves from 1d.tlu.dl.delivery.mp.microsoft.com. Used for Defender definitions and
+              update delivery.
+            </p>
+            <button type="button" class="copyButton" data-copy="5.188.133.99">Copy address</button>
+          </article>
+          <article class="blockCard">
+            <div class="blockHead">
+              <h3>Microsoft delivery, IPv6</h3>
+              <span class="statusText">Blocked</span>
+            </div>
+            <p class="mono">2a04:4e42:4f::684</p>
+            <p class="mono">2a04:4e42:4e::684</p>
+            <p class="blockMeta">The IPv6 addresses for the same delivery service.</p>
+            <button
+              type="button"
+              class="copyButton"
+              data-copy="2a04:4e42:4f::684 2a04:4e42:4e::684"
+            >
+              Copy both
+            </button>
+          </article>
+          <article class="blockCard">
+            <div class="blockHead">
+              <h3>Azure connection, pending</h3>
+              <span class="statusText">Pending identification</span>
+            </div>
+            <p class="mono">4.207.247.137</p>
+            <p class="blockMeta">
+              The active outbound connection from an idle snapshot. Not blocked until its owning
+              process is identified.
+            </p>
+            <button type="button" class="copyButton" data-copy="4.207.247.137">Copy address</button>
+          </article>
+          <article class="blockCard">
+            <div class="blockHead">
+              <h3>Telemetry endpoint, pending</h3>
+              <span class="statusText">Optional block</span>
+            </div>
+            <p class="mono">48.211.4.16</p>
+            <p class="blockMeta">
+              settings-win.data.microsoft.com, contacted by a Task Host process after boot. Blocking
+              it is optional.
+            </p>
+            <button type="button" class="copyButton" data-copy="48.211.4.16">Copy address</button>
+          </article>
+        </div>
+        <div class="howTo">
+          <h3>How the rule is set up</h3>
+          <p>
+            Create an outbound rule in Windows Defender Firewall with Advanced Security. Choose
+            Custom, use All programs, select TCP with remote ports 80 and 443, then under Scope add
+            the addresses above. Choose Block the connection and apply it to Domain, Private and
+            Public. Make a second rule for UDP if you want the same block there.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="notes">
+        <div class="sectionHead">
+          <h2>Tradeoffs and things to check</h2>
+          <p>Everything above is a choice with a cost. Read these before copying any of it.</p>
+        </div>
+        <div class="noteGrid">
+          <article class="noteCard">
+            <h3>No security patches</h3>
+            <p>
+              With Windows Update off, fixes for newly discovered vulnerabilities don't arrive. Turn
+              it back on for a while when a serious Windows problem is in the news, then turn it off
+              again.
+            </p>
+          </article>
+          <article class="noteCard">
+            <h3>Defender is still running</h3>
+            <p>
+              Its definition updates are blocked by the addresses above, so signatures will age.
+              Check Protection updates in Windows Security to see the block working.
+            </p>
+          </article>
+          <article class="noteCard">
+            <h3>Restore point first</h3>
+            <p>
+              Create one before each script and each batch of service or task changes. Export
+              registry keys before editing them so the changes can be reversed.
+            </p>
+          </article>
+          <article class="noteCard">
+            <h3>Addresses drift</h3>
+            <p>
+              Microsoft's delivery addresses are shared across CDN ranges. Use whatever tool is at
+              your disposal to check them periodically.
+            </p>
+          </article>
+          <article class="noteCard">
+            <h3>Changes don't stay put</h3>
+            <p>
+              Feature updates can re enable services and tasks. A quick pass through this page after
+              any major update catches them.
+            </p>
+          </article>
+          <article class="noteCard">
+            <h3>This is one setup</h3>
+            <p>
+              It fits my machine used for video, anime, code, Discord and light games. A machine
+              running VMs, printing, gaming on Xbox or needing security updates would not follow
+              this list exactly.
+            </p>
+          </article>
+        </div>
+        <p class="credits">
+          Tools used: Chris Titus Tech WinUtil and Win11Debloat by Raphi. This page documents my own
+          choices and is just a reference or guide for others and their own setups.
+        </p>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>
+        Written from a single personal setup. Check every change against your own needs before
+        applying it.
+      </p>
+    </footer>
+
+    <script src="services.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
